@@ -1,3 +1,4 @@
+import { Button } from '@chakra-ui/react'
 import type { NextPage } from 'next'
 import { useEffect } from 'react'
 
@@ -11,9 +12,19 @@ const Algorand: NextPage = () => {
         }
     }, [])
 
+    const fetchAccounts = async () => {
+        await AlgoSigner.connect({
+            ledger: 'TestNet'
+        })
+        const accounts = await AlgoSigner.accounts({
+            ledger: 'TestNet'
+        })
+        console.log(accounts)
+    }
+
     return(
         <>
-            <button>Algorand</button>
+            <Button onClick={fetchAccounts}>Algorand</Button>
         </>
     )
 }
