@@ -8,19 +8,24 @@ const Home: NextPage = () => {
 	
 	const [userAccounts, setUserAccounts] = useState<Array<string>>([])
 	
-	// check whether user has wallet connected
+	// @ts-ignore
+	const ethereumObject = globalThis.ethereum
+	
+	// check whether user has wallet connected & persist state
 	useEffect(() => {
-		// @ts-ignore
-		const ethereumObject = window.ethereum
 		if(ethereumObject.isConnected){
 			connectToMetamask()
 			console.log('Wallet connected')
 		}
 	}, [])
 
+	useEffect(() => {
+		ethereumObject.on('chainChanged', (chainId: string) => {
+			console.log(chainId)
+		})
+	}, [])
+
 	const connectToMetamask = async () => {
-		// @ts-ignore
-		const ethereumObject = window.ethereum
 		if(typeof ethereumObject !== 'undefined'){
 			const accounts: string[] = await ethereumObject.request({
 				method: 'eth_requestAccounts'
