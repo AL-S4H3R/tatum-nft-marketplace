@@ -8,8 +8,11 @@ enum ChainType {
 /*
     Pass the chainType and get client url for the same.
 */
-const mainnetClient = 'https://node.algoexplorerapi.io/v2'
-const testnetClient = 'https://node.testnet.algoexplorerapi.io/v2'
+const mainnetClientUrl = 'https://node.algoexplorerapi.io/v2'
+const testnetClientUrl = 'https://node.testnet.algoexplorerapi.io/v2'
+
+const mainnetClient = new algosdk.Algodv2(mainnetClientUrl)
+const testnetClient = new algosdk.Algodv2(testnetClientUrl)
 
 const getClient = async (chainType: ChainType) => {
     switch(chainType){
@@ -22,7 +25,21 @@ const getClient = async (chainType: ChainType) => {
     }
 }
 
+const getAccountDetails = async (
+    chain: ChainType,
+    address: string
+) => {
+    const algoClient = await getClient(chain)
+    const accountInfo =  await algoClient
+                                .accountInformation(address)
+                                .setIntDecoding(algosdk.IntDecoding.BIGINT)
+                                .do()
+    const algoBalance = accountInfo.amount as bigint
+    console.log(algoBalance)
+}
+
 export {
     getClient,
+    getAccountDetails,
     ChainType
 }
