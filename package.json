@@ -12,6 +12,7 @@
     "@emotion/react": "^11",
     "@emotion/styled": "^11",
     "@types/uuid": "^8.3.3",
+    "algosdk": "^1.13.0-beta.2",
     "axios": "^0.24.0",
     "framer-motion": "^5",
     "next": "12.0.7",
