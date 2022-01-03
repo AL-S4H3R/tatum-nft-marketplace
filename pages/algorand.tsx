@@ -11,16 +11,17 @@ const Algorand: NextPage = () => {
     // @ts-ignore
     const AlgoSigner = globalThis.AlgoSigner
     
-    useEffect(() => {
-        if(typeof AlgoSigner !== 'undefined'){
-            console.log('Algorand works')
-        }
-    }, [])
-
     const connector = new WalletConnect({
         bridge: 'https://bridge.walletconnect.org',
         qrcodeModal: QRCodeModal
     })
+
+    useEffect(() => {
+        if(connector.connected){
+            const accounts = connector.accounts
+            console.log('Account: ', accounts[0])
+        }
+    }, [])
 
     useEffect(() => {
         connector.on('connect', (err, payload) => {
@@ -29,7 +30,7 @@ const Algorand: NextPage = () => {
             }
             const { accounts } = payload.params[0]
             const currentAccount = accounts[0]
-            console.log()
+            console.log('Account: ', currentAccount)
         })
     },[])
 
