@@ -24,6 +24,10 @@ const useAlgorand = () => {
         setAccounts(connectedAccounts)
     })
 
+    connector.on('disconnect', (err, _payload) => {
+        if(err) throw new Error(JSON.stringify(err))
+    })
+    
     const connectAlgoWallet = async () => {
         if(!connector.connected){
             await connector.createSession()
