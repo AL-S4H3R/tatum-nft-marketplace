@@ -37,6 +37,35 @@ const Algorand: NextPage = () => {
         console.log(decodedResult.toString())
     }
 
+    const createNft = async () => {
+        const algodClient = new algosdk.Algodv2("", "https://api.testnet.algoexplorer.io", "")
+        let suggestedParams = await algodClient.getTransactionParams().do()
+        let createNftTxn = algosdk.makeAssetCreateTxnWithSuggestedParamsFromObject({
+            from: accounts[0],
+            decimals: 1,
+            defaultFrozen: false,
+            suggestedParams,
+            total: 1
+        })
+        const txns = [createNftTxn]
+        const txnsToSign = txns.map(txn => {
+            const encodedTxn = Buffer.from(algosdk.encodeUnsignedTransaction(txn)).toString('base64')
+            return {
+                txn: encodedTxn,
+                message: 'Creating an NFT'
+            }
+        })
+        const requestParams = [txnsToSign]
+        const txRequest = formatJsonRpcRequest('algo_signTxn', requestParams)
+        const result: Array<string | null> = await connector?.sendCustomRequest(txRequest)
+        const rawSignedTxn = result.map(element => {
+            return element ? new Uint8Array(Buffer.from(element, "base64")) : null;
+        });
+        // @ts-ignore
+        const completedTxn = await algodClient.sendRawTransaction(rawSignedTxn).do()
+        let txId = completedTxn.txId
+    }
+
     if(error){
         return(
             <div className='fixed top-0 bg-red-800 text-white'>
@@ -71,6 +100,7 @@ const Algorand: NextPage = () => {
             </nav>
             <section className='px-8'>
                 <button className='btn' onClick={testTransactions}>Deploy NFT</button>
+                <button className='btn' onClick={createNft}>Create Asset</button>
             </section>
         </div>
     )
