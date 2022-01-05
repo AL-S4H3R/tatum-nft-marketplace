@@ -1,18 +1,9 @@
-import { Button, Text } from '@chakra-ui/react'
 import type { NextPage } from 'next'
-import { useEffect, useState } from 'react'
-import { getAccountDetails, ChainType } from '../src/types/index'
-import { formatJsonRpcRequest } from '@json-rpc-tools/utils'
-import QRCodeModal from 'algorand-walletconnect-qrcode-modal'
-import algosdk from 'algosdk'
-import WalletConnect from '@walletconnect/client'
 import { useAlgorand } from '../src/hooks/useAlgorand'
-import { useAlgo } from '../src/context/WalletContext'
 
 const Algorand: NextPage = () => {
     
-    // const { accounts, connectAlgoWallet, disconnect } = useAlgorand()
-    const { accounts, connect, error } = useAlgo()
+    const { accounts, connect, error } = useAlgorand()
 
     if(error){
         return(
@@ -21,7 +12,7 @@ const Algorand: NextPage = () => {
             </div>
         )
     }
-    
+
     return(
         <div className='layout'>
             <nav className='nav'>

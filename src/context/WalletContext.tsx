@@ -17,10 +17,6 @@ const AlgoContext = createContext<IWalletInstance>({
     disconnect: () => new Promise(() => {})
 })
 
-const useAlgo = () => {
-    return useContext(AlgoContext)
-}
-
 const AlgoContextProvider: FC = ({ children }) => {
     
     const [accounts, setAccounts] = useState<string[]>([])
@@ -89,4 +85,4 @@ const AlgoContextProvider: FC = ({ children }) => {
     )
 }
 
-export { AlgoContextProvider, useAlgo }
+export { AlgoContextProvider, AlgoContext }
