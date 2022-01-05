@@ -5,7 +5,7 @@
 @layer components {
   
   .nav {
-    @apply p-8 flex items-center justify-between
+    @apply p-8 flex items-center
   }
 
   .navlink {

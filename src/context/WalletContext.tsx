@@ -1,8 +1,10 @@
-import { createContext, FC, useContext, useEffect, useState } from 'react'
+import { createContext, FC, useEffect, useState } from 'react'
 import WalletConnect from '@walletconnect/client'
 import QRCodeModal from 'algorand-walletconnect-qrcode-modal'
+import algosdk from 'algosdk'
 
 interface IWalletInstance {
+    connector?: WalletConnect
     accounts: string[],
     isConnected: boolean,
     connect: () => Promise<void>,
@@ -14,7 +16,7 @@ const AlgoContext = createContext<IWalletInstance>({
     accounts: [],
     isConnected: false,
     connect: () => new Promise(() => {}),
-    disconnect: () => new Promise(() => {})
+    disconnect: () => new Promise(() => {}),
 })
 
 const AlgoContextProvider: FC = ({ children }) => {
@@ -38,6 +40,11 @@ const AlgoContextProvider: FC = ({ children }) => {
         if(connector.connected){
             await connector.killSession()
         }
+    }
+
+    const initClient = async () => {
+        const algodClient = new algosdk.Algodv2("", "https://api.testnet.algoexplorer.io", "")
+        return (algodClient)
     }
 
     useEffect(() => {
@@ -78,7 +85,8 @@ const AlgoContextProvider: FC = ({ children }) => {
             isConnected,
             connect,
             error,
-            disconnect
+            disconnect,
+            connector
         }}>
             {children}
         </AlgoContext.Provider>
