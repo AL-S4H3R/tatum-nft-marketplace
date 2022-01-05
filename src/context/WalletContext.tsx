@@ -1,26 +1,83 @@
-import { createContext, useState } from 'react'
+import { createContext, FC, useContext, useEffect, useState } from 'react'
 import WalletConnect from '@walletconnect/client'
 import QRCodeModal from 'algorand-walletconnect-qrcode-modal'
 
 interface IWalletInstance {
-    accounts: string[]
+    accounts: string[],
+    isConnected: boolean,
+    connect: () => Promise<void>,
+    error?: Error
 }
 
-const AlgoContext = createContext(null)
+const AlgoContext = createContext<IWalletInstance>({ 
+    accounts: [],
+    isConnected: false,
+    connect: () => new Promise(() => {})
+})
 
-const AlgoContextProvider = async () => {
+const useAlgo = () => {
+    return useContext(AlgoContext)
+}
+
+const AlgoContextProvider: FC = ({ children }) => {
     
     const [accounts, setAccounts] = useState<string[]>([])
-    
+    const [isConnected, setIsConnected] = useState(false)
+    const [error, setError] = useState<Error>()
+
     const connector = new WalletConnect({
         bridge: 'https://bridge.walletconnect.org',
         qrcodeModal: QRCodeModal
     })
 
+    const connect = async () => {
+        if(!connector.connected){
+            await connector.createSession()
+        }
+    }
+
+    useEffect(() => {
+        if(connector.connected){
+            const connectedAccounts = connector.accounts
+            setAccounts(connectedAccounts)
+            setIsConnected(true)
+        }
+    }, [])
+
+    // account connection event
+    useEffect(() => {
+        connector.on('connect', (err, payload) => {
+            if(err) {
+                setError(err)
+                throw new Error(JSON.stringify(err))
+            }
+            const currentAccounts: string[] = payload.params[0].accounts
+            setAccounts(currentAccounts)
+        })
+    })
+
+    // account disconnect event
+    useEffect(() => {
+        connector.on('disconnect', (err, _payload) => {
+            if(err){
+                setError(err)
+                throw new Error(JSON.stringify(err))
+            }
+            setAccounts([])
+            setIsConnected(false)
+        })
+    })
+
     return(
-        <AlgoContext.Provider value={null}>
+        <AlgoContext.Provider value={{ 
+            accounts, 
+            isConnected,
+            connect,
+            error
+        }}>
+            {children}
         </AlgoContext.Provider>
     )
 }
 
-export { AlgoContextProvider }
+export { AlgoContextProvider, useAlgo }
