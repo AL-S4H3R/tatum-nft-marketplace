@@ -16,19 +16,16 @@ const useAlgorand = () => {
             const connectedAccounts = connector.accounts
             setAccounts(connectedAccounts)
         }
-        connector.on('connect', (err, payload) => {
-            if(err) throw new Error(JSON.stringify(err))
-            const connectedAccounts = payload.params[0]
-            setAccounts(connectedAccounts)
-            window.location.reload()
-        })
     }, [])
 
-
-    connector.on('disconnect', (err, _payload) => {
-        if(err) throw new Error(JSON.stringify(err))
-        setAccounts([])
+    useEffect(() => {
+        connector.on('connect', (err, payload) => {
+            if(err) throw new Error(JSON.stringify(err))
+            console.log(payload.params[0])
+            setAccounts(payload.params[0].accounts)
+        })
     })
+
 
     const connectAlgoWallet = async () => {
         if(!connector.connected){

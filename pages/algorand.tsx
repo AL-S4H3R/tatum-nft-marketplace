@@ -10,34 +10,7 @@ import { useAlgorand } from '../src/hooks/useAlgorand'
 
 const Algorand: NextPage = () => {
     
-    // const { accounts, connectAlgoWallet, disconnect } = useAlgorand()
-    const [accounts, setAccounts] = useState<Array<string>>([])
-
-    const connector = new WalletConnect({
-        bridge: 'https://bridge.walletconnect.org',
-        qrcodeModal: QRCodeModal
-    })
-
-    useEffect(() => {
-        if(connector.connected){
-            const currentAccounts = connector.accounts
-            setAccounts(currentAccounts)
-        }
-    },[])
-    
-    useEffect(() => {
-        connector.on('connect', (err, payload) => {
-            if(err) throw new Error(JSON.stringify(err))
-            console.log(payload.params[0])
-            setAccounts(payload.params[0].accounts)
-        })
-    })
-    const connectAlgoWallet = async () => {
-        if(!connector.connected){
-            await connector.createSession()
-        }
-    }
-
+    const { accounts, connectAlgoWallet, disconnect } = useAlgorand()
     return(
         <div className='layout'>
             <nav className='nav'>
