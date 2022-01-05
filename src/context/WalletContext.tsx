@@ -6,13 +6,15 @@ interface IWalletInstance {
     accounts: string[],
     isConnected: boolean,
     connect: () => Promise<void>,
+    disconnect: () => Promise<void>,
     error?: Error
 }
 
 const AlgoContext = createContext<IWalletInstance>({ 
     accounts: [],
     isConnected: false,
-    connect: () => new Promise(() => {})
+    connect: () => new Promise(() => {}),
+    disconnect: () => new Promise(() => {})
 })
 
 const useAlgo = () => {
@@ -33,6 +35,12 @@ const AlgoContextProvider: FC = ({ children }) => {
     const connect = async () => {
         if(!connector.connected){
             await connector.createSession()
+        }
+    }
+
+    const disconnect = async () => {
+        if(connector.connected){
+            await connector.killSession()
         }
     }
 
@@ -73,7 +81,8 @@ const AlgoContextProvider: FC = ({ children }) => {
             accounts, 
             isConnected,
             connect,
-            error
+            error,
+            disconnect
         }}>
             {children}
         </AlgoContext.Provider>

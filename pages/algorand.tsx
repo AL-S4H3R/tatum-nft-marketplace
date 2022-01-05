@@ -14,6 +14,14 @@ const Algorand: NextPage = () => {
     // const { accounts, connectAlgoWallet, disconnect } = useAlgorand()
     const { accounts, connect, error } = useAlgo()
 
+    if(error){
+        return(
+            <div className='fixed top-0 bg-red-800 text-white'>
+                <p>{JSON.stringify(error)}</p>
+            </div>
+        )
+    }
+    
     return(
         <div className='layout'>
             <nav className='nav'>
