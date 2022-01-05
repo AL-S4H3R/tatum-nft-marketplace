@@ -14,8 +14,8 @@ const Algorand: NextPage = () => {
         const algodClient = new algosdk.Algodv2("", "https://api.testnet.algoexplorer.io", "")
         let suggestedParams = await algodClient.getTransactionParams().do()
         const txn = algosdk.makePaymentTxnWithSuggestedParamsFromObject({
-            from: "ALICEU3WMO5XYJVSODKJSYLFILIXXBEXHKIVSMX7GMGXJAYGFCJKVSQTUE",
-            to: "HZ57J3K46JIJXILONBBZOHX6BKPXEM2VVXNRFSUED6DKFD5ZD24PMJ3MVA",
+            from: accounts[0],
+            to: '2OAHI424WK2G5DJCXLJWONAZEJBCOXPZ2NSPCIUHMFKEEFVM65Q3EBCA44',
             amount: 100000,
             suggestedParams,
         });
@@ -34,7 +34,7 @@ const Algorand: NextPage = () => {
         const decodedResult = result.map(element => {
             return element ? new Uint8Array(Buffer.from(element, "base64")) : null;
         });
-        console.log(decodedResult)
+        console.log(decodedResult.toString())
     }
 
     if(error){
@@ -69,10 +69,7 @@ const Algorand: NextPage = () => {
                     </button>
                 }
             </nav>
-            {
-                accounts && <p>{accounts[0]}</p>
-            }
-            <section>
+            <section className='px-8'>
                 <button className='btn' onClick={testTransactions}>Deploy NFT</button>
             </section>
         </div>
