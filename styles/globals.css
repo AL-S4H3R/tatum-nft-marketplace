@@ -8,6 +8,10 @@
     @apply p-8 flex items-center justify-between
   }
 
+  .navlink {
+    @apply cursor-pointer transition duration-200 hover:text-gray-600 
+  }
+
   .layout {
     @apply h-screen w-screen bg-gray-100
   }
@@ -16,4 +20,5 @@
     @apply p-2 bg-gray-900 text-gray-100 
     rounded hover:bg-gray-700 transition-all duration-200;
   }
+
 }

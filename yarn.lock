@@ -776,6 +776,11 @@
     minimatch "^3.0.4"
     strip-json-comments "^3.1.1"
 
+"@fontsource/ubuntu-mono@^4.5.0":
+  version "4.5.0"
+  resolved "https://registry.yarnpkg.com/@fontsource/ubuntu-mono/-/ubuntu-mono-4.5.0.tgz#39fe55921dcf3ea78580ff67b5015f24471a2e6b"
+  integrity sha512-Yb+/jh9MUp56hZZOVBO++3J5Jg/V8XG5aDk4ef0hGlsA2IlVsDpGNr1JHBRqAQ/rNFcJuJHGtGr2cdq+TBCX9w==
+
 "@hapi/accept@5.0.2":
   version "5.0.2"
   resolved "https://registry.yarnpkg.com/@hapi/accept/-/accept-5.0.2.tgz#ab7043b037e68b722f93f376afb05e85c0699523"

@@ -11,18 +11,22 @@ import { useAlgorand } from '../src/hooks/useAlgorand'
 const Algorand: NextPage = () => {
     
     const { accounts, connectAlgoWallet, disconnect } = useAlgorand()
+    
     return(
         <div className='layout'>
             <nav className='nav'>
-                <h1>logo</h1>
+                <h1>nftAP</h1>
+                <div>
+                    <ul className='flex space-x-12'>
+                        <li className='navlink'>Markets</li>
+                        <li className='navlink'>Discord</li>
+                        <li className='navlink'>FAQ's</li>
+                    </ul>
+                </div>
                 <button className='btn' onClick={connectAlgoWallet}>
                     Login
                 </button>
-                {/* <button onClick={disconnect}>Disconnect</button> */}
             </nav>
-            {
-                accounts && <p>{accounts[0]}</p>
-            }
         </div>
     )
 }
