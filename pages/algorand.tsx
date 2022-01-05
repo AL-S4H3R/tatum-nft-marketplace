@@ -7,11 +7,13 @@ import QRCodeModal from 'algorand-walletconnect-qrcode-modal'
 import algosdk from 'algosdk'
 import WalletConnect from '@walletconnect/client'
 import { useAlgorand } from '../src/hooks/useAlgorand'
+import { useAlgo } from '../src/context/WalletContext'
 
 const Algorand: NextPage = () => {
     
-    const { accounts, connectAlgoWallet, disconnect } = useAlgorand()
-    
+    // const { accounts, connectAlgoWallet, disconnect } = useAlgorand()
+    const { accounts, connect, error } = useAlgo()
+
     return(
         <div className='layout'>
             <nav className='nav'>
@@ -23,10 +25,13 @@ const Algorand: NextPage = () => {
                         <li className='navlink'>FAQ's</li>
                     </ul>
                 </div>
-                <button className='btn' onClick={connectAlgoWallet}>
+                <button className='btn' onClick={connect}>
                     Login
                 </button>
             </nav>
+            {
+                accounts && <p>{accounts[0]}</p>
+            }
         </div>
     )
 }
