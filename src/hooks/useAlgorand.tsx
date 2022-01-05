@@ -14,7 +14,7 @@ const useAlgorand = () => {
     useEffect(() => {
         if(connector.connected){
             const connectedAccounts = connector.accounts
-            setAccounts(accounts)
+            setAccounts(connectedAccounts)
         }
     }, [])
 
@@ -26,8 +26,9 @@ const useAlgorand = () => {
 
     connector.on('disconnect', (err, _payload) => {
         if(err) throw new Error(JSON.stringify(err))
+        setAccounts([])
     })
-    
+
     const connectAlgoWallet = async () => {
         if(!connector.connected){
             await connector.createSession()
