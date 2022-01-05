@@ -16,13 +16,14 @@ const useAlgorand = () => {
             const connectedAccounts = connector.accounts
             setAccounts(connectedAccounts)
         }
+        connector.on('connect', (err, payload) => {
+            if(err) throw new Error(JSON.stringify(err))
+            const connectedAccounts = payload.params[0]
+            setAccounts(connectedAccounts)
+            window.location.reload()
+        })
     }, [])
 
-    connector.on('connect', (err, payload) => {
-        if(err) throw new Error(JSON.stringify(err))
-        const connectedAccounts = payload.params[0]
-        setAccounts(connectedAccounts)
-    })
 
     connector.on('disconnect', (err, _payload) => {
         if(err) throw new Error(JSON.stringify(err))
