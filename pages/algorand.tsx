@@ -99,10 +99,53 @@ const Algorand: NextPage = () => {
         console.log(txId)
     }
 
-    const transferNft = async () => {
+    /*
+        tx one -> opt-in to receive the asset (buyer)
+        tx two -> buyer transfers the amount in algos to the minter
+        tx three -> seller signs the transfer txn & receives payment in algos
+    */
 
+    const transferNft = async (
+        assetIndex: number,
+        sellerAddress: string
+    ) => {
+        const algodClient = new algosdk.Algodv2("", "https://api.testnet.algoexplorer.io", "")
+        let suggestedParams = await algodClient.getTransactionParams().do()
+        
+        // buyer opts-in to receive the asset
+        let txOne = await algosdk.makeAssetTransferTxnWithSuggestedParamsFromObject({
+            amount: 0,
+            assetIndex,
+            from: accounts[0],
+            to: accounts[0],
+            suggestedParams
+        }) 
+
+        // buyer pays the nft fee
+        let txTwo = algosdk.makePaymentTxnWithSuggestedParamsFromObject({
+            from: accounts[0],
+            to: sellerAddress,
+            amount: 100000,
+            suggestedParams,
+        });
+        
+        // seller confirms the transfer
+        let txThree = await algosdk.makeAssetTransferTxnWithSuggestedParamsFromObject({
+            amount: 1,
+            assetIndex,
+            from: sellerAddress,
+            to: accounts[0],
+            suggestedParams
+        })
+
+        // combine transactions
+        const allTxns = [txOne, txTwo, txThree]
+
+        // group transactions
+        const txGroup = algosdk.assignGroupID(allTxns)
+
+        
     }
-
     const uploadToIpfs = async (data: string) => {
         const url = `https://api-eu1.tatum.io/v3/ipfs`
         const res = await axios.post(url, data, {
