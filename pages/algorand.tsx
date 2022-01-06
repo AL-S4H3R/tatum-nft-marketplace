@@ -3,6 +3,8 @@ import { useAlgorand } from '../src/hooks/useAlgorand'
 import algosdk from 'algosdk'
 import { formatJsonRpcRequest } from '@json-rpc-tools/utils'
 import Avatar from '../src/components/Avatar'
+import axios from 'axios'
+import { v4 } from 'uuid'
 
 const Algorand: NextPage = () => {
     
@@ -42,7 +44,7 @@ const Algorand: NextPage = () => {
         let suggestedParams = await algodClient.getTransactionParams().do()
         let createNftTxn = algosdk.makeAssetCreateTxnWithSuggestedParamsFromObject({
             from: accounts[0],
-            decimals: 1,
+            decimals: 0,
             defaultFrozen: false,
             suggestedParams,
             total: 1
@@ -64,6 +66,52 @@ const Algorand: NextPage = () => {
         // @ts-ignore
         const completedTxn = await algodClient.sendRawTransaction(rawSignedTxn).do()
         let txId = completedTxn.txId
+        console.log(txId)
+    }
+
+    const receiveNft = async (assetIndex: number) => {
+        const algodClient = new algosdk.Algodv2("", "https://api.testnet.algoexplorer.io", "")
+        let suggestedParams = await algodClient.getTransactionParams().do()
+        let receiveNftTxn = await algosdk.makeAssetTransferTxnWithSuggestedParamsFromObject({
+            amount: 0,
+            assetIndex,
+            from: accounts[0],
+            to: accounts[0],
+            suggestedParams
+        })
+        const txns = [receiveNftTxn]
+        const txnsToSign = txns.map(txn => {
+            const encodedTxn = Buffer.from(algosdk.encodeUnsignedTransaction(txn)).toString('base64')
+            return {
+                txn: encodedTxn,
+                message: 'Creating an NFT'
+            }
+        })
+        const requestParams = [txnsToSign]
+        const txRequest = formatJsonRpcRequest('algo_signTxn', requestParams)
+        const result: Array<string | null> = await connector?.sendCustomRequest(txRequest)
+        const rawSignedTxn = result.map(element => {
+            return element ? new Uint8Array(Buffer.from(element, "base64")) : null;
+        });
+        // @ts-ignore
+        const completedTxn = await algodClient.sendRawTransaction(rawSignedTxn).do()
+        let txId = completedTxn.txId
+        console.log(txId)
+    }
+
+    const transferNft = async () => {
+
+    }
+
+    const uploadToIpfs = async (data: string) => {
+        const url = `https://api-eu1.tatum.io/v3/ipfs`
+        const res = await axios.post(url, data, {
+            headers: {
+                'x-api-key': process.env.NEXT_PUBLIC_TATUM_API_KEY!,
+                'content-type': 'multipart/form-data'
+            }
+        })
+        console.log(res.data)
     }
 
     if(error){
@@ -99,8 +147,9 @@ const Algorand: NextPage = () => {
                 }
             </nav>
             <section className='px-8'>
-                <button className='btn' onClick={testTransactions}>Deploy NFT</button>
-                <button className='btn' onClick={createNft}>Create Asset</button>
+                <button className='btn' onClick={createNft}>Mint NFT</button>
+                <button className='btn' onClick={() => receiveNft(56821955)}>Receive NFT</button>
+                <button className='btn' onClick={createNft}>Transfer NFT</button>
             </section>
         </div>
     )

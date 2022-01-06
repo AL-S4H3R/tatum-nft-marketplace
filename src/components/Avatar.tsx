@@ -3,7 +3,7 @@ import BoringAvatar from 'boring-avatars'
 
 const Avatar: FC = () => {
     return(
-        <BoringAvatar/>
+        <BoringAvatar variant='beam'/>
     )
 }
 
